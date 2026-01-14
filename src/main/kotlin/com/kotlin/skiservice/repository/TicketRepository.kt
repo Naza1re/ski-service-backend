@@ -1,19 +1,21 @@
 package com.kotlin.skiservice.repository
 
 import com.kotlin.skiservice.entities.QueueTicket
-import jakarta.persistence.LockModeType
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
 interface TicketRepository : JpaRepository<QueueTicket, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT MAX(t.ticketNumber) FROM QueueTicket t")
+    fun findMaxTicketNumber(): Int?
+
     @Query("SELECT q FROM QueueTicket q WHERE q.status = 'WAITING' ORDER BY q.ticketNumber ASC")
-    fun findNextWaitingTickets(): List<QueueTicket>?
+    fun findNextWaitingTicket(pageable: PageRequest): QueueTicket?
+
 
     @Query("SELECT q FROM QueueTicket q WHERE q.status = 'CALLED' ORDER BY q.ticketNumber DESC")
-    fun findCurrentTicket(): QueueTicket?
+    fun findCurrentTicket(pageable: PageRequest): QueueTicket?
 }

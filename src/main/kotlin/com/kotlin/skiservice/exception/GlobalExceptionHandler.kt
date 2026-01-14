@@ -16,7 +16,7 @@ class GlobalExceptionHandler {
         return ResponseEntity(ApplicationError(errorMessage, "NOT_FOUND"), HttpStatus.NOT_FOUND)
     }
 
-    @ExceptionHandler(EquipmentAlreadyExistException::class)
+    @ExceptionHandler(EquipmentAlreadyExistException::class, QueueException::class)
     fun handleConflictException(e: RuntimeException): ResponseEntity<ApplicationError> {
         val errorMessage = e.localizedMessage
         return ResponseEntity(ApplicationError(errorMessage, "CONFLICT"), HttpStatus.CONFLICT)

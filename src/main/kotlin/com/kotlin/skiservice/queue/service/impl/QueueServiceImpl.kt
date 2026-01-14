@@ -1,8 +1,11 @@
 package com.kotlin.skiservice.queue.service.impl
 
+import com.kotlin.skiservice.entities.QueueTicket
+import com.kotlin.skiservice.exception.QueueException
 import com.kotlin.skiservice.queue.dto.QueueResponse
 import com.kotlin.skiservice.queue.service.QueueService
 import com.kotlin.skiservice.repository.TicketRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,20 +18,19 @@ class QueueServiceImpl(
 
     @Transactional(readOnly = true)
     override fun getQueue(): QueueResponse {
-        val current = ticketRepository.findCurrentTicket()
-        val next = ticketRepository.findNextWaitingTickets()?.get(0)
+        val current = getCurrent()
+        val next = getNext()
 
         return QueueResponse(
-            current = current?.ticketNumber?.toString() ?: "-",
-            next = next?.ticketNumber?.toString() ?: "-"
+            current = current.ticketNumber.toString(),
+            next = next.ticketNumber.toString()
         )
     }
 
     @Transactional
     override fun nextTicket(): QueueResponse {
 
-        val nextTicket = ticketRepository.findNextWaitingTickets()?.get(0)
-            ?: throw RuntimeException("Queue is empty")
+        val nextTicket = getNext()
 
         nextTicket.status = "CALLED"
         ticketRepository.save(nextTicket)
@@ -37,13 +39,23 @@ class QueueServiceImpl(
             "/topic/queue",
             QueueResponse(
                 current = nextTicket.ticketNumber.toString(),
-                next = ticketRepository.findNextWaitingTickets()!!.get(0)?.ticketNumber?.toString() ?: "-"
+                next = getNext().ticketNumber.toString()
             )
         )
 
         return QueueResponse(
             current = nextTicket.ticketNumber.toString(),
-            next = ticketRepository.findNextWaitingTickets()!!.get(0)?.ticketNumber?.toString() ?: "-"
+            next = getNext().ticketNumber.toString()
         )
+    }
+
+    private fun getNext() : QueueTicket {
+        return ticketRepository.findNextWaitingTicket(PageRequest.of(0,1))
+            ?: throw QueueException("Queue is empty")
+    }
+
+    private fun getCurrent() : QueueTicket {
+        return ticketRepository.findCurrentTicket((PageRequest.of(0,1)))
+            ?: throw QueueException("Current ticket not found")
     }
 }

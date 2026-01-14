@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component
 @Mapper(componentModel = "spring")
 @Component
 interface ClientMapper {
-
     fun toResponse(client: Client): ClientResponse
     fun toModel(clientRequest: ClientRequest): Client
 }

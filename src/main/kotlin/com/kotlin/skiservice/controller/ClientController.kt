@@ -6,10 +6,12 @@ import com.kotlin.skiservice.service.ClientService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v0.1/clients")
+@PreAuthorize("hasAnyRole('RENTAL_MANAGER','USER_ADMIN')")
 class ClientController(
     private val clientService: ClientService
 ) {

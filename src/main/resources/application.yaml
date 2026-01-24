@@ -25,3 +25,6 @@ app:
   rental:
     item:
       count-equipment-per-rental-order: ${COUNT_EQUIPMENT_PER_RENTAL_ORDER:3}
+
+security:
+    secret: ${SECURITY_SECRET:secret}

@@ -15,12 +15,12 @@ class SkiPass(
     val barcode: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
-    val client: Client,
+    @JoinColumn(name = "client_id")
+    var client: Client? = null,
 
-    @Column(name = "valid_from", nullable = false)
-    val validFrom: LocalDateTime,
+    @Column(name = "valid_from")
+    val validFrom: LocalDateTime? = null,
 
-    @Column(name = "valid_to", nullable = false)
-    val validTo: LocalDateTime
+    @Column(name = "valid_to")
+    val validTo: LocalDateTime? = null,
 )

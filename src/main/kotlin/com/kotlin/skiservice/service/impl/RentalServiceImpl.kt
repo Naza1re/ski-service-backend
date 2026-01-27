@@ -95,6 +95,15 @@ class RentalServiceImpl(
         return rentalOrderMapper.toResponse(rental)
     }
 
+    override fun getRentalByClientId(clientId: Long): RentalOrder {
+        val rental = rentalRepository.findByClientId(clientId)
+        if (rental != null) {
+            return rental.get()
+        } else {
+            throw RentalOrderNotFoundException("Rental with client with id $clientId not found")
+        }
+    }
+
     private fun validateEndRentalByEquipment(equipmentList: RentalOrderItemListResponse) {
         if (equipmentList.rentalOrderItemList.isNotEmpty()) {
             val barCodes = equipmentList.rentalOrderItemList.map { it.equipmentBarCode }

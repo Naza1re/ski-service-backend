@@ -1,11 +1,11 @@
 package com.kotlin.skiservice.repository
 
-import com.kotlin.skiservice.entities.RentalOrder
+import com.kotlin.skiservice.entities.SkiPass
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface RentalRepository : JpaRepository<RentalOrder, Long> {
-    fun findByClientId(clientId: Long): Optional<RentalOrder>
+interface SkiPassRepository : JpaRepository<SkiPass, Long> {
+    fun findByBarcode(barcode: String): Optional<SkiPass>
 }
